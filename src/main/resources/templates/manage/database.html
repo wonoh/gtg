@@ -1,0 +1,219 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic_layout}">
+
+<!-- fragment -->
+<div layout:fragment="content">
+    <div th:insert="~{content-header::content-header}"></div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <h3 th:text="${infoList.get(0).value}">4000</h3>
+
+                            <p>Total Courses</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-university"></i>
+                        </div>
+                        <a th:href="@{/course/search}" class="small-box-footer">More info <i
+                                class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3 th:text="${infoList.get(3).value.length() > 10 ? infoList.get(3).value.substring(0, 10) : infoList.get(3).value}">2018-01-01</h3>
+
+                            <p>Most Recent Update</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-clock"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3 th:text="${infoList.get(4).value}">?</h3>
+
+                            <p>User Registrations</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-person-add"></i>
+                        </div>
+                        <a th:href="@{/manage/user}" class="small-box-footer">More info <i
+                                class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>?</h3>
+
+                            <p>Not Used</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-close-round"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fa fa-info-circle"></i>
+                                &nbsp;데이터베이스 정보
+                            </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="summaryTable" class="table table-bordered table-hover">
+                                <thead>
+                                <tr class="d-flex">
+                                    <th class="col-3">항목</th>
+                                    <th class="col-7">값</th>
+                                    <th class="col-2">비고</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="d-flex" th:each="info : ${infoList}">
+                                    <td class="col-3" th:text="${info.attribute}"></td>
+                                    <td class="col-7" th:text="${info.value}"></td>
+                                    <td class="col-2" th:text="${info.comment}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fa fa-plus-circle"></i>
+                                &nbsp;강의 저장
+                            </h3>
+                        </div>
+
+                        <form role="form" method="post" th:action="@{/manage/database}">
+                            <div class="card-body">
+                                <p class="text-sm">강의 정보들을 데이터베이스에 저장할 수 있습니다.</p>
+
+                                <div class="form-group">
+                                    <label for="selectYear">년도</label>
+                                    <select class="form-control select2" id="selectYear"
+                                            name="year" style="width: 100%;">
+                                        <option value="2018" selected="selected">2018년</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="selectSemester">학기</label>
+                                    <select class="form-control select2" id="selectSemester"
+                                            name="semester" style="width: 100%;">
+                                        <option value="10">1학기</option>
+                                        <option value="20">2학기</option>
+                                    </select>
+                                </div>
+
+                                <input type="hidden" name="action" value="insert"/>
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary" id="insertBtn">저장</button>
+                            </div>
+                        </form>
+
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <!-- /.col -->
+
+                <div class="col-md-6">
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fa fa-minus-circle"></i>
+                                &nbsp;강의 삭제
+                            </h3>
+                        </div>
+
+                        <form role="form" method="post" th:action="@{/manage/database}">
+                            <div class="card-body">
+                                <p class="text-sm">강의 정보들을 데이터베이스에서 제거할 수 있습니다.</p>
+
+                                <input type="hidden" name="action" value="delete"/>
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-danger" id="deleteBtn">REMOVE</button>
+                            </div>
+                        </form>
+
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- ./row -->
+
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+
+</div>
+<!-- end fragment -->
+
+<th:block layout:fragment="script">
+    <!-- DataTables -->
+    <script th:src="@{/plugins/datatables/jquery.dataTables.js}"></script>
+    <script th:src="@{/plugins/datatables/dataTables.bootstrap4.js}"></script>
+    <script th:inline="javascript">
+
+        $(function () {
+            $('#summaryTable').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": true,
+                "autoWidth": false
+            });
+        });
+
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+
+    </script>
+</th:block>

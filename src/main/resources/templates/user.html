@@ -1,0 +1,46 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+    <title>Thymeleaf3</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+
+<body>
+<h1>User info</h1>
+<hr/>
+<h3 sec:authentication="name">Spring security username</h3>
+<h3>[[${#authentication.name}]]</h3>
+<hr/>
+
+<p sec:authorize-url="/course/search">
+    <a href="/course/search">SEARCH</a>
+</p>
+<p sec:authorize-url="/course/create">
+    <a href="/course/create">CREATE</a>
+</p>
+<p sec:authorize-url="/admin">
+    <a href="/admin">ADMIN</a>
+</p>
+<hr/>
+
+<h1 sec:authorize="hasRole('ROLE_ADMIN')">
+    This content is only for administrators.
+</h1>
+<h1 sec:authorize="hasRole('ROLE_USER')">
+    This content is only for users.
+</h1>
+<hr/>
+
+<div>[[${#authentication}]]</div>
+<hr/>
+<div>[[${#authentication.principal}]]</div>
+<hr/>
+<div th:text="${#authentication.principal}"></div>
+<hr/>
+<div th:if="${#authentication.principal!='anonymousUser'}" th:text="${#authentication.principal.member}"></div>
+<hr/>
+
+</body>
+
+</html>

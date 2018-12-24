@@ -1,0 +1,338 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic_layout}">
+
+<!-- fragment -->
+<div layout:fragment="content">
+    <div th:insert="~{content-header::content-header}"></div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="alert alert-info alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fa fa-info"></i> 알림!</h5>
+                시간표 생성 시 설정한 조건들을 가능한 충족시키는 방법으로 진행합니다. 그러나 생성의 결과가 모든 조건을 만족시키지 않을 수도 있습니다.
+            </div>
+
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">조건</h3>
+                    <div class="card-tools"></div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body" id="form-card">
+                    <div class="row">
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>학년</label>
+                                <select class="form-control select2"
+                                        name="grade" style="width: 100%;">
+                                    <option value="1" th:attrappend="selected=${grade=='1'?'selected':''}">1학년</option>
+                                    <option value="2" th:attrappend="selected=${grade=='2'?'selected':''}">2학년</option>
+                                    <option value="3" th:attrappend="selected=${grade=='3'?'selected':''}">3학년</option>
+                                    <option value="4" th:attrappend="selected=${grade=='4'?'selected':''}">4학년</option>
+                                    <option value="5" th:attrappend="selected=${grade=='5'?'selected':''}">5학년</option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>학과</label>
+                                <select class="form-control select2" data-placeholder="학과를 선택하세요"
+                                        name="major" style="width: 100%;" id="major-select">
+                                    <option value="">---</option>
+                                    <option th:each="m : ${majorList}" th:value="${m.majorCode}" th:text="${m.name}"
+                                            th:attrappend="selected=${major == m.majorCode ? 'selected' : ''}">
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label>최대 학점</label>
+                                <select class="form-control select2" data-placeholder="수강가능 학점"
+                                        name="credit" style="width: 100%;">
+                                    <option th:each="i : ${#numbers.sequence(12, 23)}" th:value="${i}"
+                                            th:text="${i}"></option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>공강</label>
+                                <select class="form-control select2"
+                                        data-placeholder="원하는 요일을 고르세요" style="width: 100%;"
+                                        name="holiday">
+                                    <option value="0" selected="selected">없음</option>
+                                    <option value="1">월</option>
+                                    <option value="2">화</option>
+                                    <option value="3">수</option>
+                                    <option value="4">목</option>
+                                    <option value="5">금</option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label>전공 개수</label>
+                                <select class="form-control select2" data-placeholder="전공과목 개수"
+                                        name="majorcnt" style="width: 100%;">
+                                    <option th:each="i : ${#numbers.sequence(3, 8)}" th:value="${i}"
+                                            th:text="${i}"></option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>교양</label>
+                                <select class="form-control select2" data-placeholder="전공과목 개수"
+                                        name="general" style="width: 100%;">
+                                    <option value="0">포함하지 않음</option>
+                                    <option value="1">포함</option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <button class="btn btn-block btn-success" type="button"
+                            id="createBtn" style="width: 100px;">시간표 생성
+                    </button>
+                </div>
+            </div>
+            <!-- /.card -->
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">고정 과목</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- text input -->
+                            <div class="form-group">
+                                <label>학수번호</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" placeholder="12341234"
+                                           id="addCourseInput" maxlength="8">
+                                    <div class="input-group-append">
+                                        <div id="addCourseBtn" class="btn btn-info">
+                                            <i class="fa fa-plus-square"></i>
+                                        </div>
+                                        <div id="resetCourseBtn" class="btn btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <table class="table table-hover" id="fixedCourseTable">
+                                <tr>
+                                    <th>학수번호</th>
+                                    <th>과목명</th>
+                                    <th>강의시간</th>
+                                    <th>교수</th>
+                                    <th>강의실</th>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+                <!-- /.col (left) -->
+                <div class="col-md-6">
+                    <!-- iCheck -->
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">생성 결과</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- THE CALENDAR -->
+                            <div id="fullcalendar"></div>
+                        </div>
+                        <!-- /.card-body -->
+                        <div id="loading" class="overlay hide">
+                            <i class="fa fa-refresh fa-spin">
+                            </i>
+                        </div>
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col (right) -->
+            </div>
+            <!-- /.row -->
+
+        </div>
+    </section>
+
+    <form id="createForm" th:method="post" th:action="@{/course/create}">
+        <input type="hidden" name="year" value="">
+        <input type="hidden" name="semester" value="">
+        <input type="hidden" name="grade" value="">
+        <input type="hidden" name="major" value="">
+        <input type="hidden" name="credit" value="">
+        <input type="hidden" name="holiday" value="">
+        <input type="hidden" name="majorcnt" value="">
+        <input type="hidden" name="general" value="">
+    </form>
+</div>
+<!-- end fragment -->
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript" th:src="@{/js/search.js}"></script>
+    <script th:inline="javascript">
+
+        $(document).ready(function () {
+
+            var formObj = $('#createForm');
+            var formCard = $('#form-card');
+            var date = new Date();
+
+            // select2
+            $('.select2').select2();
+
+            // submit form
+            $('#createBtn').click(function () {
+                var year = date.getFullYear();
+                var semester = date.getMonth() + 1 >= 7 ? "20" : "10";
+                var grade = formCard.find("select[name='grade']").val();
+                var major = formCard.find("select[name='major']").val();
+                var credit = formCard.find("select[name='credit']").val();
+                var holiday = formCard.find("select[name='holiday']").val();
+                var majorcnt = formCard.find("select[name='majorcnt']").val();
+                var general = formCard.find("select[name='general']").val();
+
+                formObj.find("[name='year']").val(year);
+                formObj.find("[name='semester']").val(semester);
+                formObj.find("[name='grade']").val(grade);
+                formObj.find("[name='major']").val(major);
+                formObj.find("[name='credit']").val(credit);
+                formObj.find("[name='holiday']").val(holiday);
+                formObj.find("[name='majorcnt']").val(majorcnt);
+                formObj.find("[name='general']").val(general);
+
+                // formObj.submit();
+
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
+
+                var data = {
+                    year: year,
+                    semester: semester,
+                    grade: grade,
+                    major: major,
+                    credit: credit,
+                    holiday: holiday,
+                    majorcnt: majorcnt,
+                    general: general,
+                    token: token,
+                    header: header
+                };
+
+                searchManager.post(data, function (obj) {
+                    $('#fullcalendar').fullCalendar('removeEvents');
+                    // .fullCalendar('renderEvents', events [, stick ])
+                    // $('#fullcalendar').fullCalendar('renderEvents', obj, true);
+
+                    $('#loading').addClass('hide');
+                    $('#fullcalendar').fullCalendar('today');
+                    $('#fullcalendar').fullCalendar('addEventSource', obj);
+                    $('#fullcalendar').fullCalendar('renderEvents');
+                });
+
+                alert('Please wait a few moments!');
+
+                $('#loading').removeClass('hide');
+            });
+
+
+            // FullCalendar
+            $('#fullcalendar').fullCalendar({
+                defaultView: 'agendaWeek',
+                height: 'auto',
+                allDaySlot: false,
+                minTime: '09:00:00',
+                maxTime: '22:00:00',
+                nowIndicator: false,
+                weekends: false,
+                columnHeaderFormat: 'ddd',
+                header: {
+                    left: '',
+                    center: '',
+                    right: 'prev,next'
+                },
+                displayEventTime: true,
+                slotEventOverlap: false
+            });
+
+            function addFixCourse(obj) {
+                var tr = "";
+
+                tr += "<tr>" +
+                    "<td>" + obj.id.code + "</td>" +
+                    "<td>" + obj.title + "</td>" +
+                    "<td>" + obj.time + "</td>" +
+                    "<td>" + obj.instructor + "</td>" +
+                    "<td>" + obj.room + "</td>" + "</tr>";
+
+                console.log(tr);
+
+                $('#fixedCourseTable').append(tr);
+            }
+
+            $('#addCourseBtn').click(function () {
+                var code = $('#addCourseInput').val();
+                if (code.length === 0)
+                    return;
+
+                var d = new Date();
+                var course = {
+                    year: d.getFullYear(),
+                    semester: (d.getMonth() + 1 >= 7 ? "20" : "10"),
+                    code: code
+                };
+
+                searchManager.get(course, addFixCourse);
+                $('#addCourseInput').val("");
+            });
+
+            $('#resetCourseBtn').click(function () {
+                var tr = $('#fixedCourseTable tr');
+
+                for (var i = 1; i < tr.length; i++) {
+                    tr.eq(i).remove();
+                }
+            });
+
+        });
+
+    </script>
+</th:block>

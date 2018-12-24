@@ -1,0 +1,261 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic_layout}">
+
+<!-- fragment -->
+<div layout:fragment="content">
+    <div th:insert="~{content-header::content-header}"></div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">조건</h3>
+                    <div class="card-tools"></div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body" id="form-card">
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>강의명</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="searchTitle" class="form-control" name="title" type="text"
+                                           placeholder="강의명을 입력하세요 (3글자 이상)"
+                                        th:value="${title}">
+                                    <div class="input-group-append">
+                                        <div id="searchTitleBtn" class="btn btn-primary">
+                                            <i class="fa fa-search"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>년도</label>
+                                <select class="form-control select2"
+                                        name="year" style="width: 100%;">
+                                    <option value="2018" th:attrappend="selected=${year=='2018'?'selected':''}">2018년</option>
+                                    <option value="2017" th:attrappend="selected=${year=='2017'?'selected':''}">2017년</option>
+                                    <option value="2016" th:attrappend="selected=${year=='2016'?'selected':''}">2016년</option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label>학기</label>
+                                <select class="form-control select2"
+                                        name="semester" style="width: 100%;">
+                                    <option th:attrappend="selected=${semester=='10'?'selected':''}" value="10">1학기</option>
+                                    <option th:attrappend="selected=${semester=='20'?'selected':''}" value="20">2학기</option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label>학년</label>
+                                <select class="form-control select2"
+                                        name="grade" style="width: 100%;" th:disabled="${major==''}">
+                                    <option value="0" th:attrappend="selected=${grade=='0'?'selected':''}">모든학년</option>
+                                    <option value="1" th:attrappend="selected=${grade=='1'?'selected':''}">1학년</option>
+                                    <option value="2" th:attrappend="selected=${grade=='2'?'selected':''}">2학년</option>
+                                    <option value="3" th:attrappend="selected=${grade=='3'?'selected':''}">3학년</option>
+                                    <option value="4" th:attrappend="selected=${grade=='4'?'selected':''}">4학년</option>
+                                    <option value="5" th:attrappend="selected=${grade=='5'?'selected':''}">5학년</option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>학과</label>
+                                <select class="form-control select2" data-placeholder="학과를 선택하세요"
+                                        name="major" style="width: 100%;" id="major-select"
+                                        th:disabled="${major == ''}">
+                                    <option value="">---</option>
+                                    <option th:each="m : ${majorList}" th:value="${m.majorCode}" th:text="${m.name}"
+                                            th:attrappend="selected=${major == m.majorCode ? 'selected' : ''}">
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>교양</label>
+                                <select class="form-control select2" data-placeholder="교양을 선택하세요"
+                                        name="general" style="width: 100%;" id="general-select"
+                                        th:disabled="${general == ''}">
+                                    <option value="">---</option>
+                                    <option th:each="gen : ${generalList}" th:value="${gen.courseCode}"
+                                            th:text="${gen.name}"
+                                            th:attrappend="selected=${general == gen.courseCode ? 'selected' : ''}">
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <button class="btn btn-block btn-success" type="button"
+                            id="searchBtn" style="width: 100px;">검색
+                    </button>
+                </div>
+            </div>
+            <!-- /.card -->
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover">
+                                <tr>
+                                    <th>학수번호</th>
+                                    <th>과목명</th>
+                                    <th>이수</th>
+                                    <th>학점</th>
+                                    <th>정원</th>
+                                    <th>강의시간</th>
+                                    <th>교수</th>
+                                    <th>강의실</th>
+                                </tr>
+                                <tr th:each="course : ${list}">
+                                    <td>
+                                        <a th:href="${course.syllabus}">[[${course.id.code}]]</a>
+                                    </td>
+                                    <td th:text="${course.title}"></td>
+                                    <td th:text="${course.classification}"></td>
+                                    <td th:text="${course.credit}"></td>
+                                    <td th:text="${course.quota}"></td>
+                                    <td th:text="${course.time}"></td>
+                                    <td th:text="${course.instructor}"></td>
+                                    <td th:text="${course.room}"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div><!-- /.row -->
+
+        </div>
+
+        <form method="post" th:action="@{/course/search}" id="searchForm">
+        <input type="hidden" name="year" value="">
+        <input type="hidden" name="semester" value="">
+        <input type="hidden" name="grade" value="">
+        <input type="hidden" name="major" value="">
+        <input type="hidden" name="general" value="">
+        <input type="hidden" name="title" value="">
+        </form>
+
+    </section>
+
+
+</div>
+<!-- end fragment -->
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        $(document).ready(function () {
+
+            var formObj = $('#searchForm');
+            var searchTitleBtn = $('#searchTitleBtn');
+
+            // select2
+            $('.select2').select2();
+
+            $('#major-select').change(function() {
+                var g_select = $('#general-select');
+                g_select.val("");
+                g_select.attr('disabled', 'disabled');
+            });
+
+            $('#general-select').change(function() {
+                var m_select = $('#major-select');
+                m_select.val("");
+                m_select.attr('disabled', 'disabled');
+            });
+
+            // submit form
+            $('#searchBtn').click(function () {
+                var formCard = $('#form-card');
+                var year = formCard.find("select[name='year']").val();
+                var semester = formCard.find("select[name='semester']").val();
+                var grade = formCard.find("select[name='grade']").val();
+                var major = formCard.find("select[name='major']").val();
+                var general = formCard.find("select[name='general']").val();
+
+                formObj.find("[name='year']").val(year);
+                formObj.find("[name='semester']").val(semester);
+                formObj.find("[name='grade']").val(grade);
+                formObj.find("[name='major']").val(major);
+                formObj.find("[name='general']").val(general);
+
+                formObj.submit();
+            });
+
+            // title search
+            searchTitleBtn.click(function () {
+                var formCard = $('#form-card');
+                var year = formCard.find("select[name='year']").val();
+                var semester = formCard.find("select[name='semester']").val();
+                var title = $('#searchTitle').val();
+
+                if (title.length >= 2) {
+                    formObj.find("[name='year']").val(year);
+                    formObj.find("[name='semester']").val(semester);
+                    formObj.find("[name='title']").val(title);
+
+                    formObj.submit();
+                }
+            });
+        });
+
+        function plan(year, term_cd, subject_cd, member_no) {
+            var h = 600;
+            var w = 720;
+            var winl = (screen.width - w) / 2;
+            var wint = (screen.height - h) / 2;
+            winprops = 'height=' + h + ',width=' + w + ',top=' + wint + ',left=' + winl + ',scrollbars=yes,resizable=yes';
+
+            //url =	"http://www.naver.com";
+            url = [[${baseUrl}]] + "/servlets/timetable?attribute=plan&subject_cd=" + subject_cd
+                + "&member_no=" + member_no
+                + "&year=" + year
+                + "&hakgi=" + term_cd
+                + "&fake=" + new Date();
+
+            win = window.open(url, "plan", winprops);
+            if (parseInt(navigator.appVersion) >= 4) {
+                win.window.focus();
+            }
+        }
+
+    </script>
+</th:block>
